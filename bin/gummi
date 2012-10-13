@@ -1,0 +1,4 @@
+#!/usr/bin/env coffee
+
+
+require('/Users/bender/Develop/sbks/gummi-cli/cli.coffee')

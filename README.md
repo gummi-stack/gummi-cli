@@ -1,3 +1,17 @@
+# Installation
+```
+git clone git://github.com/falsecz/gummi-cli.git
+```
+
+make symlink to your bindir in path
+```
+ln -s $(pwd)/bin/gummi ~/bin/gummi
+```
+
+# Command
+
+All commands must be executed inside git repository (registered in stack)
+
 ## Stop all processes
 ```
 $ gummi ps:stop
