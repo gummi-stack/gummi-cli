@@ -1,0 +1,21 @@
+{
+  "name": "gummi-cli",
+  "version": "0.0.0",
+  "description": "ERROR: No README.md file found!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/falsecz/gummi-cli.git"
+  },
+  "dependencies": {
+	  "director": "*",
+	  "exec-sync": "*",
+	  "colors": "*",
+	  "relative-date": "*"
+  },
+  "author": "",
+  "license": "BSD"
+}
