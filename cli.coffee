@@ -54,8 +54,8 @@ else if command is 'ps:stop'
 else if command is 'run'
 	options = 
 		host: '10.1.69.105'
-		port: 81
-		path: '/'
+		port: 80
+		path: "/apps/#{git.name}/#{git.branch}/ps/"
 		method: 'POST'
 	
 	cmd = process.argv[3..]
@@ -94,7 +94,6 @@ else if command is 'run'
 			process.stdin.on 'data', (b) ->
 				if b.length == 1 && b[0] == 4
 					process.stdin.emit('end')
-
 	req.write JSON.stringify command: cmd.join ' '
 
 	req.end()
