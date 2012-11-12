@@ -20,27 +20,32 @@ api = new Api config
 
 
 # console.log command
+cmdList = {}
+
+cmd = (name, cb) ->
+	cmdList[name] = cb
+	# console.log name
 
 
-if command is 'ps:restart'
+cmd 'ps:restart', ->
 	api.get "apps/#{git.name}/#{git.branch}/ps/restart", (data) ->
 		util.log util.inspect data
 
-if command is 'logs'
+cmd 'logs', ->
 	api.on 'data', (data) ->
 		process.stdout.write data
 		
 	api.getRaw "apps/#{git.name}/#{git.branch}/logs?tail=1", (data) ->
 
 
-else if command is 'ps'
+cmd 'ps', ->
 	api.get "apps/#{git.name}/#{git.branch}/ps", (processes) ->
 		for process in processes
 			date = relativeDate new Date process.time
 			console.log " [#{process.opts.worker.yellow}] #{date}\t #{process.opts.cmd}" 
 			# util.log util.inspect process
 
-else if command is 'ps:stop'
+cmd 'ps:stop', ->
 	api.get "apps/#{git.name}/#{git.branch}/ps/stop", (data) ->
 		if data.status is 'ok'
 			console.log 'All processes stopped'
@@ -51,7 +56,7 @@ else if command is 'ps:stop'
 		
 	
 
-else if command is 'run'
+cmd 'run', ->
 	options = 
 		host: '10.1.69.105'
 		port: 80
@@ -97,5 +102,9 @@ else if command is 'run'
 	req.write JSON.stringify command: cmd.join ' '
 
 	req.end()
+	
+if cmdList[command]	
+	cmdList[command].call()
 else 
-	console.log "Unknown command"
+	console.log "Unknown command\n"
+	console.log "  #{key}" for key of cmdList
