@@ -9,7 +9,6 @@ relativeDate = require 'relative-date'
 
 
 args = process.argv[2..]
-command = args[0]
 
 config = 
 	apiHost: '10.1.69.105'
@@ -44,6 +43,22 @@ cmd 'ps', ->
 			date = relativeDate new Date process.time
 			console.log " [#{process.opts.worker.yellow}] #{date}\t #{process.opts.cmd}" 
 			# util.log util.inspect process
+
+cmd 'ps:scale', () ->
+	unless arguments.length
+		api.get "apps/#{git.name}/#{git.branch}/ps/scale", (processes) ->
+			util.log util.inspect processes
+			for process in processes
+				date = relativeDate new Date process.time
+				console.log " [#{process.opts.worker.yellow}] #{date}\t #{process.opts.cmd}" 
+	else
+		scales = {}
+		for arg in arguments
+			[name, count] = arg.split '='
+			scales[name] = count
+		api.post "apps/#{git.name}/#{git.branch}/ps/scale", scales: scales, (out) ->
+			util.log util.inspect out
+			
 
 cmd 'ps:stop', ->
 	api.get "apps/#{git.name}/#{git.branch}/ps/stop", (data) ->
@@ -102,9 +117,11 @@ cmd 'run', ->
 	req.write JSON.stringify command: cmd.join ' '
 
 	req.end()
+
+command = args[0]
 	
 if cmdList[command]	
-	cmdList[command].call()
+	cmdList[command].apply null, args[1..]
 else 
 	console.log "Unknown command\n"
 	console.log "  #{key}" for key of cmdList

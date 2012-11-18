@@ -15,7 +15,6 @@ class Api extends EventEmitter
 		@request 'POST', url, data, yes, done
 		
 	request: (method, url, data, isJson, done) ->
-		data = ''
 		data = JSON.stringify data if data 
 		
 		opts = 
@@ -45,6 +44,13 @@ class Api extends EventEmitter
 					done json 
 				else 
 					done buffer
+
+		req.on 'error', (err) ->
+			if err.code is 'ECONNREFUSED'
+				console.log "Couldn't connect to api #{opts.host}."
+				return
+			throw err
+
 		req.write data
 		req.end()
 	
