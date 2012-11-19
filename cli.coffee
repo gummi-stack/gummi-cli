@@ -7,6 +7,8 @@ Api = require './lib/api'
 colors = require 'colors'
 relativeDate = require 'relative-date'
 
+fn = util.inspect # colorized output :)
+util.inspect = (a, b, c) -> fn a, no, 5, yes 
 
 args = process.argv[2..]
 
@@ -39,9 +41,12 @@ cmd 'logs', ->
 
 cmd 'ps', ->
 	api.get "apps/#{git.name}/#{git.branch}/ps", (processes) ->
+		processes = processes.sort (a, b) ->
+			b.opts.worker > b.opts.worker
+			
 		for process in processes
 			date = relativeDate new Date process.time
-			console.log " [#{process.opts.worker.yellow}] #{date}\t #{process.opts.cmd}" 
+			console.log " [#{process.opts.worker.yellow}] #{date}\t #{process.opts.cmd}\t #{process.state?.magenta}" 
 			# util.log util.inspect process
 
 cmd 'ps:scale', () ->
@@ -57,7 +62,8 @@ cmd 'ps:scale', () ->
 			[name, count] = arg.split '='
 			scales[name] = count
 		api.post "apps/#{git.name}/#{git.branch}/ps/scale", scales: scales, (out) ->
-			util.log util.inspect out
+			unless out or out.started
+				util.log util.inspect out
 			
 
 cmd 'ps:stop', ->

@@ -23,6 +23,7 @@ class Api extends EventEmitter
 			path: "/" + url
 			method: method
 			headers:
+				'Accept': 'application/json'
 				'Content-Type': 'application/json; charset=utf-8'
 				'Content-Length': data.length
 
