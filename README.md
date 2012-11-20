@@ -1,12 +1,8 @@
 # Installation
 ```
-git clone git://github.com/falsecz/gummi-cli.git
+npm install https://github.com/gummi-stack/gummi-cli/archive/master.tar.gz -g
 ```
 
-make symlink to your bindir in path
-```
-ln -s $(pwd)/bin/gummi ~/bin/gummi
-```
 
 # Command
 
