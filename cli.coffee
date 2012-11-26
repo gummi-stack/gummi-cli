@@ -78,14 +78,29 @@ cmd 'ps:stop', ->
 	
 
 cmd 'run', ->
+	util.log util.inspect console
+	# TODO do api
+	cmd = process.argv[3..]
+	x = 
+		command: cmd.join ' '
+		env:
+			COLUMNS: process.stdout.getWindowSize()[0]
+			LINES: process.stdout.getWindowSize()[1]
+			
+	out = JSON.stringify x
+	
+	util.log util.inspect out
 	options = 
-		host: '10.1.69.105'
+		host: config.apiHost
 		port: 80
 		path: "/apps/#{git.name}/#{git.branch}/ps/"
 		method: 'POST'
+		headers:
+			'Accept': 'application/json'
+			'Content-Type': 'application/json; charset=utf-8'
+			'Content-Length': out.length
 	
-	cmd = process.argv[3..]
-
+	
 	req = http.request options, (res) ->
 		buffer = ''
 		res.on 'data', (data) ->
@@ -120,7 +135,8 @@ cmd 'run', ->
 			process.stdin.on 'data', (b) ->
 				if b.length == 1 && b[0] == 4
 					process.stdin.emit('end')
-	req.write JSON.stringify command: cmd.join ' '
+
+	req.write out
 
 	req.end()
 
