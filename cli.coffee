@@ -46,7 +46,7 @@ cmd 'ps', ->
 			
 		for process in processes
 			date = relativeDate new Date process.time
-			console.log " [#{process.opts.worker.yellow}] #{date}\t #{process.opts.cmd}\t #{process.state?.magenta}" 
+			console.log " [#{process.opts.worker.yellow}] #{date}\t #{process.opts.cmd}\t #{process.state?.magenta}\t #{process.dynoData?.toadwartId}" 
 			# util.log util.inspect process
 
 cmd 'ps:scale', () ->
@@ -78,7 +78,6 @@ cmd 'ps:stop', ->
 	
 
 cmd 'run', ->
-	util.log util.inspect console
 	# TODO do api
 	cmd = process.argv[3..]
 	x = 
@@ -89,7 +88,6 @@ cmd 'run', ->
 			
 	out = JSON.stringify x
 	
-	util.log util.inspect out
 	options = 
 		host: config.apiHost
 		port: 80
