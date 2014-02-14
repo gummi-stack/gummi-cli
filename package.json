@@ -7,17 +7,20 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-	 "gummi": "./bin/gummi"
+    "gummi": "./bin/gummi"
   },
   "repository": {
     "type": "git",
     "url": "git://github.com/falsecz/gummi-cli.git"
   },
   "dependencies": {
-	  "director": "*",
-	  "exec-sync": "*",
-	  "colors": "*",
-	  "relative-date": "*"
+    "director": "*",
+    "exec-sync": "*",
+    "colors": "*",
+    "relative-date": "*",
+    "cson-config": "~0.1.7",
+    "request": "~2.33.0",
+    "async": "~0.2.10"
   },
   "author": "",
   "license": "BSD"
