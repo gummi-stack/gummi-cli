@@ -137,7 +137,7 @@ runCommand = (command, args, done) ->
 	else if command.length is 0
 		done()
 	else
-		console.log "Unknown command\n"
+		console.log "Unknown command: #{command}\n"
 		console.log "  #{key}" for key of cmdList
 		done()
 
@@ -157,6 +157,16 @@ run = () ->
 			args = cmd.split ' '
 			runCommand args[0], args[1..], () ->
 				callback(null, '')
+
+	r.complete = (line, cb) ->
+		completions = []
+		re = new RegExp("^#{line.replace /\ /g, ''}", "i");
+
+		for cmd, f of cmdList
+			if cmd.match re
+				completions.push cmd
+
+		cb null, [completions, line]
 
 	for cmd, _ of cmdList
 		r.context[cmd] = 1
