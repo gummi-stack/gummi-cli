@@ -8,7 +8,8 @@ getName = (cb) ->
 		return cb err if err
 
 		[_, name] = stdout.split /:/
-		cb null, name.replace('/', ':').replace('\n', '')
+		# cb null, name.replace('/', ':').replace('\n', '')
+		cb null, "mrdka.git"
 
 
 getBranch = (cb) ->

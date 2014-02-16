@@ -95,11 +95,13 @@ cmd 'run', (args, done)->
 		headers:
 			'Accept': 'application/json'
 			'Content-Type': 'application/json; charset=utf-8'
-			'Content-Length': out.length
+			'Content-Length': data.length
 
 
 	request options, (err, res, body) ->
-		r = JSON.parse body
+		r = try JSON.parse body
+		return done body unless r
+
 		uri = r.rendezvousURI
 		util.log uri
 		[_, _, host, port]= uri.match /(.*):\/\/(.*):(\d+)/
