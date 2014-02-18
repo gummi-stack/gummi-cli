@@ -20,7 +20,8 @@
     "relative-date": "*",
     "cson-config": "~0.1.7",
     "request": "~2.33.0",
-    "async": "~0.2.10"
+    "async": "~0.2.10",
+    "debug": "~0.7.4"
   },
   "author": "",
   "license": "BSD"

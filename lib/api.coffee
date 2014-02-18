@@ -1,14 +1,32 @@
+debug = require('debug') 'api'
 request = require 'request'
 util    = require 'util'
-EventEmitter = require('events').EventEmitter
+http = require 'http'
 
-class Api extends EventEmitter
+
+handleError = (e) ->
+	return console.log "Couldn't connect to api " if err?.code is 'ECONNREFUSED'
+	throw err if err
+
+class Api extends require('events').EventEmitter
 	constructor: (@config) ->
 
 
-	getRaw: (url, done) ->
-		@request 'GET', url, {}, no, done
+	getStream: (path, done) ->
+		url = "http://#{@config.apiHost}/#{path}"
+		opts =
+			uri: url
+			headers:
+				'Accept': 'application/json'
+				'Content-Type': 'application/json; charset=utf-8'
 
+		debug 'stream', url
+
+		req = http.request opts, (res) =>
+			res.setEncoding 'utf8'
+			done res
+
+		req.on 'error', handleError
 
 	get: (url, done) ->
 		@request 'GET', url, {}, yes, done
@@ -21,8 +39,11 @@ class Api extends EventEmitter
 	request: (method, url, data, isJson, done) ->
 		data = JSON.stringify data if data
 
+		url = "http://#{@config.apiHost}/#{url}"
+		debug url
+
 		opts =
-			uri: "http://#{@config.apiHost}/#{url}"
+			uri: url
 			method: method
 			body: data
 			headers:
@@ -31,8 +52,7 @@ class Api extends EventEmitter
 				'Content-Length': data.length
 
 		request opts, (err, res, body) =>
-			return console.log "Couldn't connect to api #{opts.host}." if err?.code is 'ECONNREFUSED'
-			throw err if err
+			return handleError err if err
 
 			return done body if !isJson
 

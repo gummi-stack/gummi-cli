@@ -1,18 +1,14 @@
 require('cson-config').load()
 relativeDate = require 'relative-date'
-request      = require 'request'
-config       = process.config
-util         = require 'util'
-repl         = require('repl')
-net          = require 'net'
-git          = require './lib/git'
-Api          = require './lib/api'
+request = require 'request'
+config = process.config
+util = require 'util'
+repl = require 'repl'
+net  = require 'net'
+git  = require './lib/git'
+Api = require './lib/api'
 
-
-fn = util.inspect # colorized output :)
-util.inspect = (a, b, c) -> fn a, no, 5, yes
 args = process.argv[2..]
-
 
 api = new Api config
 
@@ -29,11 +25,17 @@ cmd 'ps:restart', (args, done) ->
 
 
 cmd 'logs', (args,done) ->
-	api.on 'data', (data) ->
-		process.stdout.write data
+	# api.on 'data', (data) ->
+	# 	process.stdout.write data
+	#
+# http://node2.lxc.nag.ccl/apps/mrdka.git/master/build/logs
+	api.getStream "apps/#{config.git.name}/#{config.git.branch}/build/logs", (res) ->
+		console.log 'xx'
+		res.on 'data', (d) ->
+			console.log data
 
-	api.getRaw "apps/#{config.git.name}/#{config.git.branch}/logs?tail=1", (data) ->
-		done()
+		res.on 'end', () ->
+			done()
 
 
 cmd 'ps', (args, done) ->
@@ -99,6 +101,7 @@ cmd 'run', (args, done)->
 
 
 	request options, (err, res, body) ->
+		console
 		r = try JSON.parse body
 		return done body unless r
 
@@ -175,6 +178,7 @@ run = () ->
 
 
 git.getRepo (err, name, branch) ->
+	debug = require('debug') 'git'
 	if err
 		console.log err
 		process.exit 0
@@ -182,5 +186,5 @@ git.getRepo (err, name, branch) ->
 	config.git = {}
 	config.git.name = name
 	config.git.branch = branch
-
+	debug "name: #{name}, branch: #{branch}"
 	run()
