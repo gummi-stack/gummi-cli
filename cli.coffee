@@ -18,13 +18,24 @@ cmd = (name, cb) ->
 	cmdList[name] = cb
 
 
+
 cmd 'ps:restart', (args, done) ->
 	api.get "apps/#{config.git.name}/#{config.git.branch}/ps/restart", (data) ->
 		# util.log util.inspect data
 		runCommand 'ps', null, done
 
 
-cmd 'logs', (args,done) ->
+cmd 'releases', (args, done) ->
+	api.get "apps/#{config.git.name}/#{config.git.branch}/releases", (releases) ->
+		console.log '[Empty list]' if releases.length is 0
+
+		for release in releases
+			date = relativeDate new Date release.timestamp
+			console.log " v#{release.version}\t#{date}"
+		done()
+
+
+cmd 'logs', (args, done) ->
 	# api.on 'data', (data) ->
 	# 	process.stdout.write data
 	#
@@ -41,11 +52,13 @@ cmd 'logs', (args,done) ->
 cmd 'ps', (args, done) ->
 	api.get "apps/#{config.git.name}/#{config.git.branch}/ps", (processes) ->
 		processes = processes.sort (a, b) ->
-			b.opts.worker > b.opts.worker
+			a.opts.worker > b.opts.worker
+
+		console.log '[Empty list]' if processes.length is 0
 
 		for process in processes
 			date = relativeDate new Date process.time
-			console.log " [#{process.opts.worker.yellow}] #{date}\t #{process.opts.cmd}\t #{process.state?.magenta}\t #{process.dynoData?.toadwartId}"
+			console.log " [#{process.opts.worker}] #{date}\t #{process.opts.cmd}\t #{process.state?.magenta}\t #{process.dynoData?.toadwartId}"
 
 		done()
 		# util.log util.inspect process
@@ -57,7 +70,7 @@ cmd 'ps:scale', (args, done) ->
 			util.log util.inspect processes
 			for process in processes
 				date = relativeDate new Date process.time
-				console.log " [#{process.opts.worker.yellow}] #{date}\t #{process.opts.cmd}"
+				console.log " [#{process.opts.worker}] #{date}\t #{process.opts.cmd}"
 			done()
 	else
 		scales = {}
@@ -70,7 +83,7 @@ cmd 'ps:scale', (args, done) ->
 			done()
 
 
-cmd 'ps:stop', (args,done) ->
+cmd 'ps:stop', (args, done) ->
 	api.get "apps/#{config.git.name}/#{config.git.branch}/ps/stop", (data) ->
 		if data.status is 'ok'
 			console.log 'All processes stopped'
@@ -165,11 +178,10 @@ run = () ->
 
 	r.complete = (line, cb) ->
 		completions = []
-		re = new RegExp("^#{line.replace /\ /g, ''}", "i");
+		re = new RegExp "^#{line.replace /\ /g, ''}", "i"
 
 		for cmd, f of cmdList
-			if cmd.match re
-				completions.push cmd
+			completions.push cmd if cmd.match re
 
 		cb null, [completions, line]
 
@@ -188,3 +200,5 @@ git.getRepo (err, name, branch) ->
 	config.git.branch = branch
 	debug "name: #{name}, branch: #{branch}"
 	run()
+
+

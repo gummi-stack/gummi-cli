@@ -60,7 +60,7 @@ class Api extends require('events').EventEmitter
 				json = JSON.parse body
 			catch err
 				util.log "Invalid response"
-				util.log buffer
+				util.log body
 				process.exit 1
 
 			done json
