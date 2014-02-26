@@ -40,6 +40,7 @@ cmd 'logs', (args, done) ->
 	# 	process.stdout.write data
 	#
 # http://node2.lxc.nag.ccl/apps/mrdka.git/master/build/logs
+
 	api.getStream "apps/#{config.git.name}/#{config.git.branch}/build/logs", (res) ->
 		console.log 'xx'
 		res.on 'data', (d) ->
@@ -101,36 +102,42 @@ cmd 'run', (args, done)->
 			COLUMNS: process.stdout.getWindowSize()[0]
 			LINES: process.stdout.getWindowSize()[1]
 
-	data = JSON.stringify c
 
 	options =
 		uri: "http://#{config.apiHost}/apps/#{config.git.name}/#{config.git.branch}/ps/"
 		method: 'POST'
-		body: data
-		headers:
-			'Accept': 'application/json'
-			'Content-Type': 'application/json; charset=utf-8'
-			'Content-Length': data.length
-
+		json: c
 
 	request options, (err, res, body) ->
-		console
-		r = try JSON.parse body
-		return done body unless r
+		# console.log err, body
+		return console.log err.stack if err
+		return console.log body.error.message if body.error
 
-		uri = r.rendezvousURI
+		# console.log 'xxx', body
+		# r = try JSON.parse body
+		# return done body unless r
+
+		uri = body.rendezvousURI
 		util.log uri
 		[_, _, host, port]= uri.match /(.*):\/\/(.*):(\d+)/
+
+
+		# host = '10.11.1.13'
+		# port = 6000
+
 		util.log "Connecting to #{host}:#{port}"
 		console.log ''
 
+		# return
+
 		sock = net.connect port, host
+		# process.stdin.pause()
 		process.stdin.pipe sock
 		sock.pipe process.stdout
 
 		sock.on 'connect', ->
-			process.stdin.resume()
 			process.stdin.setRawMode yes
+			# process.stdin.resume()
 
 		sock.on 'close', done = ->
 			process.stdin.setRawMode no

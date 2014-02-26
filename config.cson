@@ -1,3 +1,4 @@
 process.env.DEBUG = '*'
-apiHost: 'node2.lxc.nag.ccl'
+# apiHost: 'node2.lxc.nag.ccl'
+apiHost: '10.11.1.13:9001'
 
