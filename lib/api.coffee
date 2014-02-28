@@ -4,7 +4,7 @@ util    = require 'util'
 http = require 'http'
 
 
-handleError = (e) ->
+handleError = (err) ->
 	return console.log "Couldn't connect to api " if err?.code is 'ECONNREFUSED'
 	throw err if err
 
