@@ -41,10 +41,14 @@ cmd 'logs', (args, done) ->
 	#
 # http://node2.lxc.nag.ccl/apps/mrdka.git/master/build/logs
 
-	api.getStream "apps/#{config.git.name}/#{config.git.branch}/build/logs", (res) ->
+	repo = config.git.name.replace /\.git$/, ''
+	api.getStream "apps/#{repo}/#{config.git.branch}/*/tail", (res) ->
 		console.log 'xx'
 		res.on 'data', (d) ->
 			console.log data
+
+		res.on 'error', (err) ->
+			console.log err
 
 		res.on 'end', () ->
 			done()
