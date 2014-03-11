@@ -63,7 +63,7 @@ cmd 'ps', (args, done) ->
 
 		for process in processes
 			date = relativeDate new Date process.time
-			console.log " [#{process.opts.worker}] #{date}\t #{process.opts.cmd}\t #{process.state?.magenta}\t #{process.dynoData?.toadwartId}"
+			console.log " [#{process.opts.worker}] #{date}\t #{process.opts.cmd}\t #{process.state}\t #{process.dynoData?.toadwartId}"
 
 		done()
 		# util.log util.inspect process
